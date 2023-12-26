@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+service rpcService {
+    rpc Ask(ID) returns(ID);
+    rpc AskForData(FORDATA) returns(DATASET);
+    rpc ToPre(TOPRE) returns(NULL);
+    rpc ToSuc(TOSUC) returns(NULL);
+    rpc Quit(ID) returns(NULL);
+
+    rpc Add(ADD) returns (RESP);
+    rpc Remove(DEL) returns (RESP);
+    rpc Modify(MODIFY) returns (RESP);
+    rpc Query(QUERY) returns (RESP);
+}
+
+
+// 节点加入——服务器查找存活的其他服务器，其他服务器返回的自身id
+message ID {
+    int32 id = 1;
+}
+
+// 节点加入——新节点向后继节点要数据
+message FORDATA {
+    int32 preId = 1;
+    int32 id = 2;
+}
+
+
+// 单个域名数据
+message DATA {
+    string domain = 1;
+    string ip = 2;
+    int32 id = 3;
+
+}
+
+// 节点加入——向新节点返回的多个数据
+message DATASET {
+	repeated DATA dataset = 1;
+}
+
+// null
+message NULL {
+	int32 null = 1;
+}
+
+// 节点离开——通知前驱
+message TOPRE {
+  int32 mysuc = 1;
+}
+
+// 节点离开——通知后继
+message TOSUC {
+  int32 mypre = 1;
+  repeated DATA dataset = 2;
+}
+
+// 客户请求——增加
+message ADD {
+    string domain = 1;
+    string ip =2;
+}
+
+// 客户请求——删除
+message DEL {
+    string domain = 1;
+}
+
+// 客户请求——修改
+message MODIFY {
+    string oldDomain = 1;
+    string newDomain = 3;
+    string newIp = 4;
+}
+
+// 客户请求——查询
+message QUERY {
+    string domain = 1;
+}
+
+// 服务器响应
+message RESP {
+    bool err = 1;
+    string response = 2;
+}
